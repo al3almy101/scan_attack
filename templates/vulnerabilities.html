@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerabilities - SCAN ATTACK</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-bg"></div>
+    
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="glass">
+            <div class="nav-brand">
+                <h1 class="cyber-title">SCAN ATTACK</h1>
+                <span>Vulnerabilities</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="#" onclick="logout()" class="btn btn-outline">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Vulnerabilities List -->
+        <div class="vulnerabilities-page">
+            <h1 class="cyber-title">13 Vulnerability Types</h1>
+            <p class="subtitle">Detailed information about each vulnerability with example payloads</p>
+            
+            <div class="vuln-filters">
+                <button class="btn btn-outline filter-btn active" data-filter="all">All</button>
+                <button class="btn btn-outline filter-btn" data-filter="CRITICAL">Critical</button>
+                <button class="btn btn-outline filter-btn" data-filter="HIGH">High</button>
+                <button class="btn btn-outline filter-btn" data-filter="MEDIUM">Medium</button>
+            </div>
+            
+            <div id="vulnerabilities-container" class="vuln-grid"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        let allVulns = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDetailedVulnerabilities();
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterVulnerabilities(this.dataset.filter);
+                });
+            });
+        });
+        
+        async function loadDetailedVulnerabilities() {
+            try {
+                const response = await fetch('/api/vulnerabilities/detailed');
+                allVulns = await response.json();
+                displayVulnerabilities(allVulns);
+            } catch (error) {
+                console.error('Error loading vulnerabilities:', error);
+            }
+        }
+        
+        function displayVulnerabilities(vulns) {
+            const container = document.getElementById('vulnerabilities-container');
+            container.innerHTML = '';
+            
+            vulns.forEach(vuln => {
+                const card = document.createElement('div');
+                card.classList.add('vuln-detailed-card', 'glass');
+                card.dataset.severity = vuln.severity;
+                
+                let payloadsHtml = '';
+                vuln.payloads.forEach(p => {
+                    payloadsHtml += `
+                        <div class="payload-item">
+                            <code>${p.value}</code>
+                            <span class="payload-desc">${p.description}</span>
+                        </div>
+                    `;
+                });
+                
+                card.innerHTML = `
+                    <div class="vuln-header">
+                        <h2>${vuln.name}</h2>
+                        <span class="badge badge-${vuln.severity.toLowerCase()}">${vuln.severity}</span>
+                    </div>
+                    <p class="vuln-description">${vuln.description}</p>
+                    
+                    <div class="vuln-section">
+                        <h3><i class="fas fa-bolt"></i> Example Payloads</h3>
+                        <div class="payloads-list">
+                            ${payloadsHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="vuln-section">
+                        <h3><i class="fas fa-shield-alt"></i> Remediation</h3>
+                        <p>${vuln.remediation}</p>
+                    </div>
+                    
+                    <div class="vuln-section">
+                        <h3><i class="fas fa-link"></i> Example URL</h3>
+                        <code>${vuln.example}</code>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        function filterVulnerabilities(severity) {
+            if (severity === 'all') {
+                displayVulnerabilities(allVulns);
+            } else {
+                const filtered = allVulns.filter(v => v.severity === severity);
+                displayVulnerabilities(filtered);
+            }
+        }
+        
+        function logout() {
+            window.location.href = '/logout';
+        }
+    </script>
+
+    <style>
+        .vulnerabilities-page {
+            margin-top: 20px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .vuln-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn.active {
+            background: #00ff9d;
+            color: var(--bg-primary);
+            border-color: #00ff9d;
+        }
+        
+        .vuln-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .vuln-detailed-card {
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .vuln-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .vuln-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .vuln-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .vuln-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .vuln-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vuln-section h3 i {
+            color: #00ff9d;
+        }
+        
+        .payloads-list {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .payload-item {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 3px solid #00ff9d;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .payload-item code {
+            color: #00ff9d;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .payload-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .vuln-section code {
+            background: var(--bg-tertiary);
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            color: #00b8ff;
+            word-break: break-all;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .vuln-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</body>
+</html>

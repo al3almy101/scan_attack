@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCAN ATTACK - Advanced Security Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-bg"></div>
+    
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="glass">
+            <div class="nav-brand">
+                <h1 class="cyber-title">SCAN ATTACK</h1>
+                <span>v2.0</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#vulnerabilities">Vulnerabilities</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign Up</a>
+            </div>
+        </nav>
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="cyber-title">Advanced Security Scanner</h1>
+                <p>Discover 13 types of vulnerabilities with our intelligent scanning engine</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary">Get Started</a>
+                    <a href="#features" class="btn btn-outline">Learn More</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <h2>Key Features</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>13 Vulnerability Types</h3>
+                    <p>SQLi, XSS, RCE, LFI, SSRF, Open Redirect, CORS, Secrets, XXE, SSTI, IDOR, Subdomain Takeover, WordPress</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Assistant</h3>
+                    <p>Get intelligent explanations and manual testing guidance</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>WAF Bypass 2026</h3>
+                    <p>Advanced techniques to bypass Cloudflare, Akamai, AWS WAF</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Smart Detection</h3>
+                    <p>90% less false positives with intelligent analysis</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-cookie"></i>
+                    <h3>Cookie Support</h3>
+                    <p>Scan authenticated areas with session cookies</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Detailed Reports</h3>
+                    <p>Comprehensive reports with remediation steps</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Vulnerabilities Section -->
+        <section id="vulnerabilities" class="vulnerabilities">
+            <h2>13 Vulnerability Types</h2>
+            <div class="grid grid-4" id="vuln-grid"></div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="glass">
+            <p>&copy; 2026 SCAN ATTACK Security Scanner. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        const vulns = [
+            { name: 'SQL Injection', severity: 'CRITICAL' },
+            { name: 'XSS', severity: 'HIGH' },
+            { name: 'RCE', severity: 'CRITICAL' },
+            { name: 'LFI', severity: 'HIGH' },
+            { name: 'SSRF', severity: 'HIGH' },
+            { name: 'Open Redirect', severity: 'MEDIUM' },
+            { name: 'CORS', severity: 'MEDIUM' },
+            { name: 'Secrets', severity: 'CRITICAL' },
+            { name: 'XXE', severity: 'HIGH' },
+            { name: 'SSTI', severity: 'CRITICAL' },
+            { name: 'IDOR', severity: 'HIGH' },
+            { name: 'Subdomain Takeover', severity: 'HIGH' },
+            { name: 'WordPress', severity: 'MEDIUM' }
+        ];
+        
+        const grid = document.getElementById('vuln-grid');
+        vulns.forEach(vuln => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <span class="badge badge-${vuln.severity.toLowerCase()}">${vuln.severity}</span>
+                <h4>${vuln.name}</h4>
+            `;
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
